@@ -91,7 +91,7 @@ sub _shift_run {
     if(@{$self->{task_queue}} == 0 && defined($self->empty)) {
         $self->empty->($self);
     }
-    $self->worker->($task, sub {
+    @_ = ($task, sub {
         my (@worker_results) = @_;
         $cb->(@worker_results) if defined($cb);
         $self->{running} -= 1;
@@ -101,6 +101,7 @@ sub _shift_run {
         @_ = ($self);
         goto &_shift_run;
     }, $self);
+    goto $self->worker();
 }
 
 
@@ -110,11 +111,11 @@ Async::Queue - control concurrency of asynchronous tasks
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
